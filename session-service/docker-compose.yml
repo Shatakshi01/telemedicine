@@ -1,0 +1,19 @@
+services:
+  # Session Service only - connects to external shared infrastructure
+  session-service:
+    build: .
+    container_name: session-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://telemedicine-mongo:27017/telemedicine_sessions
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: telemedicine-kafka:29092
+    depends_on:
+      - telemedicine-mongo
+      - telemedicine-kafka
+    networks:
+      - telemedicine-network
+
+networks:
+  telemedicine-network:
+    external: true

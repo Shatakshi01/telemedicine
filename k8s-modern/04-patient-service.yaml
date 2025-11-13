@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: patient-service-config
+  namespace: telemedicine
+data:
+  application.properties: |
+    # Database Configuration
+    spring.datasource.url=jdbc:postgresql://postgres-service:5432/telemedicine
+    spring.datasource.username=telemedicine_user
+    spring.datasource.password=telemedicine_password
+    spring.jpa.properties.hibernate.default_schema=patient
+    spring.jpa.hibernate.ddl-auto=update
+    spring.jpa.show-sql=false
+
+    # Kafka Configuration
+    spring.kafka.bootstrap-servers=kafka-service:29092
+    spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.StringSerializer
+    spring.kafka.producer.value-serializer=org.apache.kafka.common.serialization.StringSerializer
+    spring.kafka.consumer.group-id=patient-service-group
+    spring.kafka.consumer.key-deserializer=org.apache.kafka.common.serialization.StringDeserializer
+    spring.kafka.consumer.value-deserializer=org.apache.kafka.common.serialization.StringDeserializer
+
+    # Application Configuration
+    server.port=8080
+
+    # Basic Logging
+    logging.level.com.patient=INFO
+    logging.level.org.springframework=WARN
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: patient-service
+  namespace: telemedicine
+  labels:
+    app: patient-service
+    tier: service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: patient-service
+  template:
+    metadata:
+      labels:
+        app: patient-service
+        tier: service
+      annotations: {}
+    spec:
+      containers:
+        - name: patient-service
+          image: telemedicine/patient-service:latest
+          imagePullPolicy: Never # For local development
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: 'kubernetes'
+            - name: SPRING_CONFIG_LOCATION
+              value: 'classpath:/application.properties,file:/app/config/'
+          resources:
+            requests:
+              memory: '512Mi'
+              cpu: '200m'
+            limits:
+              memory: '1Gi'
+              cpu: '500m'
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+              readOnly: true
+          # Removed health checks - no actuator endpoints available
+      volumes:
+        - name: config
+          configMap:
+            name: patient-service-config
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:15-alpine
+          command:
+            [
+              'sh',
+              '-c',
+              'until pg_isready -h postgres-service -p 5432 -U telemedicine_user; do echo waiting for database; sleep 2; done;',
+            ]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: patient-service
+  namespace: telemedicine
+  labels:
+    app: patient-service
+spec:
+  selector:
+    app: patient-service
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30081
+      name: http
+  type: NodePort

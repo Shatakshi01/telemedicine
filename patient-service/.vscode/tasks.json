@@ -1,0 +1,41 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build Patient Service",
+      "type": "shell",
+      "command": "./gradlew",
+      "args": ["build"],
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": ["$gradle"]
+    },
+    {
+      "label": "Run Patient Service",
+      "type": "shell",
+      "command": "./gradlew",
+      "args": ["bootRun"],
+      "group": "build",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Test Patient Service",
+      "type": "shell",
+      "command": "./gradlew",
+      "args": ["test"],
+      "group": "test",
+      "isBackground": false,
+      "problemMatcher": ["$gradle"]
+    },
+    {
+      "label": "Clean Patient Service",
+      "type": "shell",
+      "command": "./gradlew",
+      "args": ["clean"],
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": ["$gradle"]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Debug Patient Service",
+      "request": "launch",
+      "mainClass": "com.patient.PatientServiceApplication",
+      "projectName": "patient-service",
+      "args": "",
+      "vmArgs": "",
+      "preLaunchTask": "Build Patient Service"
+    },
+    {
+      "type": "java",
+      "name": "Run Patient Service",
+      "request": "launch",
+      "mainClass": "com.patient.PatientServiceApplication",
+      "projectName": "patient-service",
+      "args": "",
+      "vmArgs": ""
+    }
+  ]
+}

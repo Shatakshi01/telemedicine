@@ -1,0 +1,127 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: telemedicine
+  labels:
+    name: telemedicine
+    monitoring: enabled
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init
+  namespace: telemedicine
+data:
+  init-schemas.sql: |
+    -- Create schemas for microservices
+    CREATE SCHEMA IF NOT EXISTS patient;
+    CREATE SCHEMA IF NOT EXISTS appointment;
+
+    -- Grant permissions
+    GRANT ALL PRIVILEGES ON SCHEMA patient TO telemedicine_user;
+    GRANT ALL PRIVILEGES ON SCHEMA appointment TO telemedicine_user;
+
+    -- Set default privileges for future tables
+    ALTER DEFAULT PRIVILEGES IN SCHEMA patient GRANT ALL ON TABLES TO telemedicine_user;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA appointment GRANT ALL ON TABLES TO telemedicine_user;
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: database-credentials
+  namespace: telemedicine
+type: Opaque
+stringData:
+  postgres-user: telemedicine_user
+  postgres-password: telemedicine_password
+  postgres-database: telemedicine
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: telemedicine
+  labels:
+    app: postgres
+    tier: infrastructure
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+        tier: infrastructure
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: postgres-database
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: postgres-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: postgres-password
+          resources:
+            requests:
+              memory: '256Mi'
+              cpu: '100m'
+            limits:
+              memory: '512Mi'
+              cpu: '500m'
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+            - name: init-scripts
+              mountPath: /docker-entrypoint-initdb.d
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - telemedicine_user
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - telemedicine_user
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: postgres-data
+          emptyDir: {}
+        - name: init-scripts
+          configMap:
+            name: postgres-init
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  namespace: telemedicine
+  labels:
+    app: postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+      name: postgres
