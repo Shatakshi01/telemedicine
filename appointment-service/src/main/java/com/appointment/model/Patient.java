@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 public class Patient {
 
     @Id
+    @Column(name = "patient_id")
     private Long patientId;
 
     @Column(name = "mobile_number")

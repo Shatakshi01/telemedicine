@@ -1,0 +1,16 @@
+Forwarding from 127.0.0.1:8082 -> 8082
+Forwarding from [::1]:8082 -> 8082
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+E1121 16:06:07.920348    2810 portforward.go:413] "Unhandled Error" err="an error occurred forwarding 8082 -> 8082: error forwarding port 8082 to pod fea65465342d9b5be93e1e5211103de7b80716c8dabb9ea0839f5d9b674064c5, uid : container not running (fea65465342d9b5be93e1e5211103de7b80716c8dabb9ea0839f5d9b674064c5)"
+error: lost connection to pod
+Forwarding from 127.0.0.1:8082 -> 8082
+Forwarding from [::1]:8082 -> 8082
+Handling connection for 8082
+Handling connection for 8082
+E1128 13:14:16.982925    2967 portforward.go:413] "Unhandled Error" err="an error occurred forwarding 8082 -> 8082: error forwarding port 8082 to pod a98572e4fc24a2db0561ce72279a050655806c0cbfd45c5267f5a42153178b87, uid : Error response from daemon: No such container: a98572e4fc24a2db0561ce72279a050655806c0cbfd45c5267f5a42153178b87"
+error: lost connection to pod

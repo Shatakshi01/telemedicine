@@ -16,51 +16,58 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 @RestController
 @RequestMapping("/patients")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Patient Management", description = "APIs for managing patient registration and information")
-@CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE,
-        RequestMethod.OPTIONS })
 public class PatientController {
 
-    private final PatientService patientService;
+        private final PatientService patientService;
 
-    @PostMapping
-    @Operation(summary = "Register a new patient", description = "Register a new patient in the system and emit a patient.registered event")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Patient registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PatientResponseDto.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "409", description = "Patient already exists", content = @Content(mediaType = "application/json"))
-    })
-    public ResponseEntity<PatientResponseDto> registerPatient(
-            @Valid @RequestBody PatientRegistrationDto registrationDto) {
+        @PostMapping
+        @Operation(summary = "Register a new patient", description = "Register a new patient in the system and emit a patient.registered event")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "201", description = "Patient registered successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PatientResponseDto.class))),
+                        @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content(mediaType = "application/json")),
+                        @ApiResponse(responseCode = "409", description = "Patient already exists", content = @Content(mediaType = "application/json"))
+        })
+        public ResponseEntity<PatientResponseDto> registerPatient(
+                        @Valid @RequestBody PatientRegistrationDto registrationDto) {
 
-        log.info("Received patient registration request for email: {}", registrationDto.getEmail());
+                log.info("Received patient registration request for email: {}", registrationDto.getEmail());
 
-        PatientResponseDto responseDto = patientService.registerPatient(registrationDto);
+                PatientResponseDto responseDto = patientService.registerPatient(registrationDto);
 
-        log.info("Patient registered successfully with ID: {}", responseDto.getId());
+                log.info("Patient registered successfully with ID: {}", responseDto.getId());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
-    }
+                return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+        }
 
-    @GetMapping("/{id}")
-    @Operation(summary = "Get patient details", description = "Retrieve patient details by patient ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Patient found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PatientResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "Patient not found", content = @Content(mediaType = "application/json"))
-    })
-    public ResponseEntity<PatientResponseDto> getPatientById(
-            @Parameter(description = "Patient ID", required = true) @PathVariable Long id) {
+        @GetMapping("/{id}")
+        @Operation(summary = "Get patient details", description = "Retrieve patient details by patient ID")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Patient found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PatientResponseDto.class))),
+                        @ApiResponse(responseCode = "404", description = "Patient not found", content = @Content(mediaType = "application/json"))
+        })
+        public ResponseEntity<PatientResponseDto> getPatientById(
+                        @Parameter(description = "Patient ID", required = true) @PathVariable Long id) {
 
-        log.info("Received request to get patient with ID: {}", id);
+                log.info("Received request to get patient with ID: {}", id);
 
-        PatientResponseDto responseDto = patientService.getPatientById(id);
+                PatientResponseDto responseDto = patientService.getPatientById(id);
 
-        return ResponseEntity.ok(responseDto);
-    }
+                return ResponseEntity.ok(responseDto);
+        }
+
+        @GetMapping
+        @Operation(summary = "Get all patients", description = "Retrieve a list of all registered patients")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Patients retrieved successfully", content = @Content(mediaType = "application/json"))
+        })
+        public ResponseEntity<?> getAllPatients() {
+                log.info("Received request to get all patients");
+                return ResponseEntity.ok(patientService.getAllPatients());
+        }
 }

@@ -1,0 +1,83 @@
+Forwarding from 127.0.0.1:8080 -> 8080
+Forwarding from [::1]:8080 -> 8080
+Handling connection for 8080
+Handling connection for 8080
+Forwarding from 127.0.0.1:8081 -> 8081
+Forwarding from [::1]:8081 -> 8081
+Handling connection for 8080
+Handling connection for 8081
+Handling connection for 8081
+Handling connection for 8081
+Handling connection for 8081
+Handling connection for 8081
+Handling connection for 8081
+Handling connection for 8081
+Handling connection for 8081
+Handling connection for 8081
+Handling connection for 8081
+Handling connection for 8081
+Forwarding from 127.0.0.1:8082 -> 8082
+Forwarding from [::1]:8082 -> 8082
+Handling connection for 8081
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+E1121 16:03:36.312398   99885 portforward.go:398] "Unhandled Error" err="error copying from local connection to remote stream: writeto tcp6 [::1]:8082->[::1]:49620: read tcp6 [::1]:8082->[::1]:49620: read: connection reset by peer"
+Handling connection for 8082
+E1121 16:04:02.459244   99885 portforward.go:413] "Unhandled Error" err="an error occurred forwarding 8082 -> 8082: error forwarding port 8082 to pod 546089c2e45c1ecfcf0db706e3112c1cd4527343acbbafba18452ae9548c6588, uid : container not running (546089c2e45c1ecfcf0db706e3112c1cd4527343acbbafba18452ae9548c6588)"
+error: lost connection to pod
+Unable to listen on port 8080: Listeners failed to create with the following errors: [unable to create listener: Error listen tcp4 127.0.0.1:8080: bind: address already in use unable to create listener: Error listen tcp6 [::1]:8080: bind: address already in use]
+error: unable to listen on any of the requested ports: [{8080 8080}]
+Unable to listen on port 8081: Listeners failed to create with the following errors: [unable to create listener: Error listen tcp4 127.0.0.1:8081: bind: address already in use unable to create listener: Error listen tcp6 [::1]:8081: bind: address already in use]
+error: unable to listen on any of the requested ports: [{8081 8081}]
+Unable to listen on port 8082: Listeners failed to create with the following errors: [unable to create listener: Error listen tcp4 127.0.0.1:8082: bind: address already in use unable to create listener: Error listen tcp6 [::1]:8082: bind: address already in use]
+error: unable to listen on any of the requested ports: [{8082 8082}]
+Handling connection for 8080
+E1121 16:13:12.716405   96772 portforward.go:413] "Unhandled Error" err="an error occurred forwarding 8080 -> 8080: error forwarding port 8080 to pod 339caa8d9067ef5f27a679ef89ffd32f82eb75aee3714773eeb57cc954c74979, uid : Error response from daemon: No such container: 339caa8d9067ef5f27a679ef89ffd32f82eb75aee3714773eeb57cc954c74979"
+error: lost connection to pod
+Handling connection for 8081
+E1128 13:14:13.799992   98682 portforward.go:413] "Unhandled Error" err="an error occurred forwarding 8081 -> 8081: error forwarding port 8081 to pod 182229d32fcd133c4e3ef88342b4dc5fb3010daa8c4bc7743d6f97a125130ddc, uid : Error response from daemon: No such container: 182229d32fcd133c4e3ef88342b4dc5fb3010daa8c4bc7743d6f97a125130ddc"
+error: lost connection to pod
+Forwarding from 127.0.0.1:8080 -> 8080
+Forwarding from [::1]:8080 -> 8080
+Forwarding from 127.0.0.1:8081 -> 8081
+Forwarding from [::1]:8081 -> 8081
+Forwarding from 127.0.0.1:8082 -> 8082
+Forwarding from [::1]:8082 -> 8082
+Handling connection for 8080
+Handling connection for 8080
+Handling connection for 8080
+Handling connection for 8080
+Handling connection for 8080
+Handling connection for 8080
+Handling connection for 8081
+Handling connection for 8081
+Handling connection for 8081
+Handling connection for 8081
+Handling connection for 8081
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8080
+Handling connection for 8081
+Handling connection for 8081
+Handling connection for 8081
+Handling connection for 8081
+Handling connection for 8081
+Handling connection for 8082
+Handling connection for 8082
+Handling connection for 8082

@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: session-service
+  namespace: telemedicine
+  labels:
+    app: session-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: session-service
+  template:
+    metadata:
+      labels:
+        app: session-service
+    spec:
+      containers:
+        - name: session-service
+          image: session-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8082
+              name: http
+          env:
+            - name: SPRING_DATA_MONGODB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: session-service-config
+                  key: SPRING_DATA_MONGODB_HOST
+            - name: SPRING_DATA_MONGODB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: session-service-config
+                  key: SPRING_DATA_MONGODB_PORT
+            - name: SPRING_DATA_MONGODB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: session-service-config
+                  key: SPRING_DATA_MONGODB_DATABASE
+            - name: SPRING_DATA_MONGODB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: session-service-config
+                  key: SPRING_DATA_MONGODB_USERNAME
+            - name: SPRING_DATA_MONGODB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: session-service-secret
+                  key: SPRING_DATA_MONGODB_PASSWORD
+            - name: SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: session-service-config
+                  key: SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              valueFrom:
+                configMapKeyRef:
+                  name: session-service-config
+                  key: SPRING_KAFKA_BOOTSTRAP_SERVERS
+            - name: KAFKA_TOPIC
+              valueFrom:
+                configMapKeyRef:
+                  name: session-service-config
+                  key: KAFKA_TOPIC
+            - name: SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: session-service-config
+                  key: SERVER_PORT
+          resources:
+            requests:
+              memory: '256Mi'
+              cpu: '250m'
+            limits:
+              memory: '512Mi'
+              cpu: '500m'

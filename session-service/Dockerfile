@@ -14,6 +14,6 @@ RUN chown appuser:appuser app.jar
 # Switch to non-root user
 USER appuser
 
-EXPOSE 8080
+EXPOSE 8082
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

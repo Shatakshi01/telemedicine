@@ -1,0 +1,39 @@
+-- Initialize telemedicine database schema
+-- This script runs once when the database is first created
+-- Create patients table with proper auto-increment
+CREATE TABLE IF NOT EXISTS patients (
+    patient_id BIGSERIAL PRIMARY KEY,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    phone_number VARCHAR(255) NOT NULL,
+    date_of_birth DATE NOT NULL,
+    gender VARCHAR(20) NOT NULL CHECK (gender IN ('MALE', 'FEMALE', 'OTHER')),
+    address VARCHAR(255),
+    medical_history TEXT,
+    created_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP(6)
+);
+-- Create appointments table with proper auto-increment
+CREATE TABLE IF NOT EXISTS appointments (
+    appointment_id BIGSERIAL PRIMARY KEY,
+    patient_id BIGINT NOT NULL,
+    doctor_id BIGINT NOT NULL,
+    appointment_date_time TIMESTAMP(6) NOT NULL,
+    status VARCHAR(50) NOT NULL CHECK (
+        status IN (
+            'SCHEDULED',
+            'COMPLETED',
+            'CANCELLED',
+            'RESCHEDULED'
+        )
+    ),
+    reason VARCHAR(500),
+    notes TEXT,
+    created_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP(6)
+);
+-- Create index on patient_id for faster lookups
+CREATE INDEX IF NOT EXISTS idx_appointments_patient_id ON appointments(patient_id);
+CREATE INDEX IF NOT EXISTS idx_appointments_doctor_id ON appointments(doctor_id);
+CREATE INDEX IF NOT EXISTS idx_appointments_date_time ON appointments(appointment_date_time);

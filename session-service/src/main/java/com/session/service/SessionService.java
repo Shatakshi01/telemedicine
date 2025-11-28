@@ -127,9 +127,24 @@ public class SessionService {
                 .collect(Collectors.toList());
     }
 
+    public List<SessionResponseDto> getAllSessions() {
+        log.info("Fetching all sessions");
+
+        List<Session> sessions = sessionRepository.findAll();
+        return sessions.stream()
+                .map(sessionMapper::toResponseDto)
+                .collect(Collectors.toList());
+    }
+
     public SessionResponseDto createSessionFromAppointment(Long appointmentId, Long patientId, Long doctorId,
             LocalDateTime scheduledTime) {
         log.info("Creating session from appointment booking - Appointment ID: {}", appointmentId);
+
+        // Check if session already exists for this appointment
+        if (sessionRepository.findByAppointmentId(appointmentId).isPresent()) {
+            log.info("Session already exists for appointment ID: {}, skipping creation", appointmentId);
+            return sessionMapper.toResponseDto(sessionRepository.findByAppointmentId(appointmentId).get());
+        }
 
         SessionRequestDto requestDto = SessionRequestDto.builder()
                 .appointmentId(appointmentId)

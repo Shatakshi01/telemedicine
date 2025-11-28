@@ -1,27 +1,42 @@
 server:
-  port: 8084
+  port: ${SERVER_PORT:8081}
 
 spring:
   application:
     name: appointment-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/telemedicine
-    username: telemedicine_user
-    password: telemedicine_password
-    driver-class-name: org.postgresql.Driver
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/telemedicine?currentSchema=appointment&searchpath=appointment}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres123}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME:org.postgresql.Driver}
+    hikari:
+      connection-init-sql: 'SET search_path TO appointment, public'
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:validate}
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        '[default_schema]': appointment
+        dialect: ${SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT:org.hibernate.dialect.PostgreSQLDialect}
+        '[default_schema]': ${SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA:appointment}
+        '[format_sql]': true
+        '[globally_quoted_identifiers]': true
+        '[jdbc.lob.non_contextual_creation]': true
+        '[hbm2ddl.auto]': ${SPRING_JPA_HIBERNATE_DDL_AUTO:validate}
+        '[physical_naming_strategy]': org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    schemas: appointment
+    default-schema: appointment
+    create-schemas: true
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     consumer:
       group-id: appointment-service
       auto-offset-reset: earliest
@@ -32,6 +47,8 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        '[spring.json.add.type.headers]': false
 
 # Swagger/OpenAPI Configuration
 springdoc:
@@ -51,6 +68,13 @@ management:
   endpoint:
     health:
       show-details: always
+      probes:
+        enabled: true
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
 
 logging:
   level:

@@ -16,7 +16,7 @@ public class OpenApiConfig {
         @Bean
         public OpenAPI appointmentServiceOpenAPI() {
                 Server server = new Server();
-                server.setUrl("http://localhost:8084");
+                server.setUrl("http://localhost:8081");
                 server.setDescription("Development server");
 
                 Contact contact = new Contact();

@@ -20,76 +20,50 @@ import java.util.Optional;
 @RequestMapping("/api/v1/appointments")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Appointment Mappings", description = "APIs for managing appointment-doctor mappings")
+@Tag(name = "Appointment Mappings", description = "Simplified APIs for appointment sessions")
 public class AppointmentMappingController {
 
     private final AppointmentMappingService appointmentMappingService;
 
+    @GetMapping
+    @Operation(summary = "Get all appointment sessions", description = "Retrieve all appointment mappings with optional filtering")
+    @ApiResponse(responseCode = "200", description = "All appointment sessions retrieved successfully")
+    public ResponseEntity<List<AppointmentMappingDto>> getAllAppointmentSessions(
+            @Parameter(description = "Patient ID filter (optional)") @RequestParam(required = false) Long patientId,
+            @Parameter(description = "Doctor ID filter (optional)") @RequestParam(required = false) Long doctorId,
+            @Parameter(description = "Status filter (optional)") @RequestParam(required = false) AppointmentMapping.AppointmentStatus status) {
+
+        log.info("REST API: Fetching appointment sessions with filters - patientId: {}, doctorId: {}, status: {}",
+                patientId, doctorId, status);
+
+        List<AppointmentMappingDto> mappings;
+
+        if (patientId != null) {
+            mappings = appointmentMappingService.findByPatientId(patientId);
+        } else if (doctorId != null) {
+            mappings = appointmentMappingService.findByDoctorId(doctorId);
+        } else if (status != null) {
+            mappings = appointmentMappingService.findByStatus(status);
+        } else {
+            mappings = appointmentMappingService.findAll();
+        }
+
+        return ResponseEntity.ok(mappings);
+    }
+
     @GetMapping("/{appointmentId}")
-    @Operation(summary = "Get appointment mapping", description = "Retrieve appointment mapping by appointment ID")
+    @Operation(summary = "Get specific appointment session", description = "Retrieve a specific appointment session by ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Appointment mapping found"),
-            @ApiResponse(responseCode = "404", description = "Appointment mapping not found")
+            @ApiResponse(responseCode = "200", description = "Appointment session found"),
+            @ApiResponse(responseCode = "404", description = "Appointment session not found")
     })
-    public ResponseEntity<AppointmentMappingDto> getAppointmentMapping(
+    public ResponseEntity<AppointmentMappingDto> getAppointmentSession(
             @Parameter(description = "Appointment ID") @PathVariable Long appointmentId) {
 
-        log.info("REST API: Fetching appointment mapping for appointment ID: {}", appointmentId);
+        log.info("REST API: Fetching appointment session for appointment ID: {}", appointmentId);
         Optional<AppointmentMappingDto> mapping = appointmentMappingService.findByAppointmentId(appointmentId);
 
         return mapping.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/patient/{patientId}")
-    @Operation(summary = "Get appointments by patient", description = "Retrieve all appointment mappings for a specific patient")
-    @ApiResponse(responseCode = "200", description = "Appointment mappings retrieved successfully")
-    public ResponseEntity<List<AppointmentMappingDto>> getAppointmentsByPatient(
-            @Parameter(description = "Patient ID") @PathVariable Long patientId) {
-
-        log.info("REST API: Fetching appointment mappings for patient ID: {}", patientId);
-        List<AppointmentMappingDto> mappings = appointmentMappingService.findByPatientId(patientId);
-        return ResponseEntity.ok(mappings);
-    }
-
-    @PostMapping("/{appointmentId}/status")
-    @Operation(summary = "Update appointment status", description = "Update the status of an appointment mapping")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Status updated successfully"),
-            @ApiResponse(responseCode = "404", description = "Appointment mapping not found")
-    })
-    public ResponseEntity<AppointmentMappingDto> updateAppointmentStatus(
-            @Parameter(description = "Appointment ID") @PathVariable Long appointmentId,
-            @RequestParam AppointmentMapping.AppointmentStatus status) {
-
-        try {
-            log.info("REST API: Updating appointment status for appointment ID: {} to {}", appointmentId, status);
-            AppointmentMappingDto updatedMapping = appointmentMappingService.updateMappingStatus(appointmentId, status);
-            return ResponseEntity.ok(updatedMapping);
-        } catch (RuntimeException e) {
-            log.error("Error updating appointment status: {}", e.getMessage());
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @GetMapping
-    @Operation(summary = "Get all appointment mappings", description = "Retrieve all appointment mappings (for monitoring)")
-    @ApiResponse(responseCode = "200", description = "All appointment mappings retrieved successfully")
-    public ResponseEntity<List<AppointmentMappingDto>> getAllAppointmentMappings() {
-
-        log.info("REST API: Fetching all appointment mappings");
-        List<AppointmentMappingDto> mappings = appointmentMappingService.findAll();
-        return ResponseEntity.ok(mappings);
-    }
-
-    @GetMapping("/status/{status}")
-    @Operation(summary = "Get appointments by status", description = "Retrieve all appointment mappings with a specific status")
-    @ApiResponse(responseCode = "200", description = "Appointment mappings retrieved successfully")
-    public ResponseEntity<List<AppointmentMappingDto>> getAppointmentsByStatus(
-            @Parameter(description = "Appointment status") @PathVariable AppointmentMapping.AppointmentStatus status) {
-
-        log.info("REST API: Fetching appointment mappings with status: {}", status);
-        List<AppointmentMappingDto> mappings = appointmentMappingService.findByStatus(status);
-        return ResponseEntity.ok(mappings);
     }
 }

@@ -29,7 +29,7 @@ public class CreateAppointmentRequest {
     @NotNull(message = "Appointment date is required")
     @Future(message = "Appointment date must be in the future")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    @Schema(description = "Appointment date and time", example = "2024-12-25 10:30", required = true)
+    @Schema(description = "Appointment date and time", example = "2025-12-25 10:30", required = false)
     private LocalDateTime appointmentDate;
 
     @Schema(description = "Reason for the appointment", example = "Regular checkup")

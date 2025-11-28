@@ -3,6 +3,7 @@ package com.session.listener;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.session.event.AppointmentBookedEvent;
 import com.session.service.AppointmentMappingService;
+import com.session.service.SessionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 public class AppointmentEventListener {
 
     private final AppointmentMappingService appointmentMappingService;
+    private final SessionService sessionService;
     private final ObjectMapper objectMapper;
 
     @KafkaListener(topics = "appointment.booked", groupId = "session-service-group", containerFactory = "kafkaListenerContainerFactory")
@@ -53,22 +55,35 @@ public class AppointmentEventListener {
     private void processAppointmentEvent(AppointmentBookedEvent event) {
         log.info("Processing appointment.booked event for appointment ID: {}", event.getAppointmentId());
 
-        // Step 1: Save appointment mapping first (separate schema)
-        // Use appointmentDate as it contains the actual appointment date/time
-        appointmentMappingService.saveAppointmentMapping(
-                event.getAppointmentId(),
-                event.getPatientId(),
-                event.getDoctorId(),
-                event.getAppointmentType(),
-                event.getAppointmentDate());
+        try {
+            // Step 1: Save appointment mapping
+            appointmentMappingService.saveAppointmentMapping(
+                    event.getAppointmentId(),
+                    event.getPatientId(),
+                    event.getDoctorId(),
+                    event.getAppointmentType(),
+                    event.getAppointmentDate());
 
-        log.info("Successfully saved appointment mapping for appointment ID: {}", event.getAppointmentId());
+            log.info("Successfully saved appointment mapping for appointment ID: {}", event.getAppointmentId());
 
-        // Step 2: Mark mapping as confirmed to allow session creation later
-        appointmentMappingService.updateMappingStatus(
-                event.getAppointmentId(),
-                com.session.entity.AppointmentMapping.AppointmentStatus.CONFIRMED);
+            // Step 2: Mark mapping as confirmed
+            appointmentMappingService.updateMappingStatus(
+                    event.getAppointmentId(),
+                    com.session.entity.AppointmentMapping.AppointmentStatus.CONFIRMED);
 
-        log.info("Appointment mapping confirmed for appointment ID: {}", event.getAppointmentId());
+            // Step 3: Automatically create session (simplified workflow)
+            sessionService.createSessionFromAppointment(
+                    event.getAppointmentId(),
+                    event.getPatientId(),
+                    event.getDoctorId(),
+                    event.getAppointmentDate() // Use appointmentDate as scheduledTime
+            );
+
+            log.info("Successfully created session for appointment ID: {}", event.getAppointmentId());
+
+        } catch (Exception e) {
+            log.error("Error processing appointment event for ID {}: {}", event.getAppointmentId(), e.getMessage(), e);
+            // Don't rethrow - we want to acknowledge the message to avoid infinite retries
+        }
     }
 }
