@@ -16,7 +16,6 @@ replay_pid*
 
 # Gradle
 .gradle/
-build/
 gradle-app.setting
 !gradle-wrapper.jar
 !gradle-wrapper.properties
@@ -42,7 +41,6 @@ buildNumber.properties
 
 # Eclipse
 .metadata
-bin/
 tmp/
 *.tmp
 *.bak
@@ -97,8 +95,6 @@ spring-boot-devtools.properties
 # Application specific
 application-local.properties
 application-dev.properties
-**/bin/
-**/build/
 **/target/
 **/.gradle/
 
