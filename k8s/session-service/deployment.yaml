@@ -75,3 +75,9 @@ spec:
             limits:
               memory: '512Mi'
               cpu: '500m'
+          volumeMounts:
+            - name: session-uploads
+              mountPath: /app/uploads
+      volumes:
+        - name: session-uploads
+          emptyDir: {}

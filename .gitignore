@@ -28,6 +28,9 @@ gradle-app.setting
 !gradle-wrapper.properties
 
 # Gradle cache
+patient-service/.gradle/** 
+appointment-service/.gradle/** 
+session-service/.gradle
 .gradle
 build/
 !src/**/build/
@@ -188,6 +191,7 @@ docker-compose.override.yml
 # ================================
 # CodeSight
 .codesight/
+
 
 # SonarQube
 .sonar/

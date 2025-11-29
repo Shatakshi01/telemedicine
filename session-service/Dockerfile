@@ -5,6 +5,9 @@ WORKDIR /app
 # Create a non-root user for security
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 
+# Create upload directory with proper permissions
+RUN mkdir -p /app/uploads && chown -R appuser:appuser /app/uploads
+
 # Copy the JAR file
 COPY build/libs/*.jar app.jar
 

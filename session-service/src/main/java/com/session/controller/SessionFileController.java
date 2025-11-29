@@ -31,7 +31,7 @@ public class SessionFileController {
 
     private final SessionFileService sessionFileService;
 
-    @PostMapping("/upload")
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Upload file to session", description = "Upload a file (image, PDF, etc.) to a telemedicine session")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "File uploaded successfully"),
@@ -40,20 +40,30 @@ public class SessionFileController {
     })
     public ResponseEntity<SessionFileDto> uploadFile(
             @Parameter(description = "Session ID") @PathVariable String sessionId,
-            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "file", required = true) MultipartFile file,
             @RequestParam(value = "category", defaultValue = "DOCUMENT") SessionFile.FileCategory category,
-            @RequestParam("uploadedBy") String uploadedBy,
-            @RequestParam("uploadedById") Long uploadedById,
+            @RequestParam(value = "uploadedBy", required = true) String uploadedBy,
+            @RequestParam(value = "uploadedById", required = true) Long uploadedById,
             @RequestParam(value = "description", required = false) String description) {
 
         try {
             log.info("REST API: Uploading file to session ID: {}, file: {}", sessionId, file.getOriginalFilename());
+
+            // Validate file is not empty
+            if (file.isEmpty()) {
+                log.error("Uploaded file is empty");
+                return ResponseEntity.badRequest().build();
+            }
+
             SessionFileDto response = sessionFileService.uploadFile(sessionId, file, category, uploadedBy, uploadedById,
                     description);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (IOException e) {
             log.error("Error uploading file: {}", e.getMessage(), e);
             return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            log.error("Unexpected error uploading file: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
