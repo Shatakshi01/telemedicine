@@ -1,4 +1,7 @@
-# Java compiled class files
+# ================================
+# Java Build Artifacts
+# ================================
+# Compiled class files
 *.class
 
 # Package Files
@@ -14,13 +17,30 @@
 hs_err_pid*
 replay_pid*
 
+# ================================
 # Gradle
+# ================================
 .gradle/
+**/build/
 gradle-app.setting
 !gradle-wrapper.jar
+!**/gradle/wrapper/gradle-wrapper.jar
 !gradle-wrapper.properties
 
+# Gradle cache
+.gradle
+build/
+!src/**/build/
+bin/
+
+# Ignore Gradle build output directory
+**/bin/
+**/build/
+**/out/
+
+# ================================
 # Maven
+# ================================
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -32,25 +52,38 @@ buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
 
-# IDE files
+# ================================
+# IDE - IntelliJ IDEA
+# ================================
 .idea/
-.vscode/
-*.swp
-*.swo
-*~
+*.iws
+*.iml
+*.ipr
+out/
+.idea_modules/
 
-# Eclipse
+# ================================
+# IDE - VS Code
+# ================================
+.vscode/
+*.code-workspace
+.history/
+
+# ================================
+# IDE - Eclipse
+# ================================
 .metadata
+.classpath
+.project
+.settings/
 tmp/
 *.tmp
 *.bak
 *.swp
 *~.nib
 local.properties
-.settings/
 .loadpath
 .recommenders
-.project
 .externalToolBuilders/
 *.launch
 .pydevproject
@@ -63,43 +96,113 @@ local.properties
 .springBeans
 .recommenders/
 
-# IntelliJ IDEA
-*.iws
-*.iml
-*.ipr
-out/
-
-# NetBeans
+# ================================
+# IDE - NetBeans
+# ================================
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
 
-# OS generated files
+# ================================
+# OS Generated Files
+# ================================
+# macOS
 .DS_Store
 .DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
-ehthumbs.db
-Thumbs.db
+.AppleDouble
+.LSOverride
 
-# Logs
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ================================
+# Logs and Temporary Files
+# ================================
 *.log
 logs/
-
-# Spring Boot
-spring-boot-devtools.properties
-
-# Application specific
-application-local.properties
-application-dev.properties
-**/target/
-**/.gradle/
-
-# Temporary files
+nohup.out
 *.tmp
 *.temp
+*.pid
+*.seed
+*.pid.lock
 
-patient-service/build/libs/patient-service-0.0.1-SNAPSHOT.jar
+# ================================
+# Spring Boot
+# ================================
+spring-boot-devtools.properties
+HELP.md
+
+# ================================
+# Application Specific
+# ================================
+application-local.properties
+application-local.yml
+application-dev.properties
+application-dev.yml
+**/application-local.*
+
+# ================================
+# Docker
+# ================================
+# Ignore docker-compose override files
+docker-compose.override.yml
+
+# ================================
+# Kubernetes
+# ================================
+# Local k8s secrets (if any)
+**/k8s/**/secrets-local.yaml
+**/k8s/**/*-local.yaml
+
+# ================================
+# Testing
+# ================================
+# Test results
+**/test-results/
+**/test-output/
+*.coverage
+.pytest_cache/
+
+# ================================
+# Other Tools
+# ================================
+# CodeSight
+.codesight/
+
+# SonarQube
+.sonar/
+
+# Editor backup files
+*.swp
+*.swo
+*~
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
